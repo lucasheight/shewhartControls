@@ -1,0 +1,22 @@
+// invalid because data point count are less then 20
+export const invalidData: number[] = [
+  11,
+  12,
+  7,
+  16,
+  20,
+  3,
+  15,
+  4,
+  2,
+  5,
+  10,
+  14,
+  9,
+  19,
+  18,
+  17,
+  6,
+  8,
+  13,
+];

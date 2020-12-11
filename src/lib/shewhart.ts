@@ -1,0 +1,188 @@
+import {
+  IShewhartDataPoint,
+  IShewhartResult,
+  IViolations,
+} from "./IShewhartResult";
+export class ShewhartControls implements IShewhartResult {
+  public isValid: boolean = false;
+  public mean: number;
+  public stDev: number;
+  public posSigma1: number;
+  public posSigma2: number;
+  public posSigma3: number;
+  public negSigma1: number;
+  public negSigma2: number;
+  public negSigma3: number;
+  public violations: IViolations;
+  public points: IShewhartDataPoint[] = [];
+  constructor(private data: number[], private minPoints: number = 20) {
+    this.isValid = this.data.length >= this.minPoints;
+    this.mean = this.calcMean(data);
+    this.stDev = this.calcStDev(data, this.mean);
+    this.posSigma1 = this.mean + 1 * this.stDev;
+    this.posSigma2 = this.mean + 2 * this.stDev;
+    this.posSigma3 = this.mean + 3 * this.stDev;
+    this.negSigma1 = this.mean - 1 * this.stDev;
+    this.negSigma2 = this.mean - 2 * this.stDev;
+    this.negSigma3 = this.mean - 3 * this.stDev;
+    this.process();
+    this.violations = {
+      ThreeSigmaViolation: this.points.some(
+        (point) => point.violations.ThreeSigmaViolation
+      ),
+      EightPointsAboveBelowMean: this.points.some(
+        (point) => point.violations.EightPointsAboveBelowMean
+      ),
+      InnerThird15ConsecutiveViolation: this.points.some(
+        (point) => point.violations.InnerThird15ConsecutiveViolation
+      ),
+      SixPointTrend: this.points.some(
+        (point) => point.violations.SixPointTrend
+      ),
+      TwoOfThreeOuterThirdViolation: this.points.some(
+        (point) => point.violations.TwoOfThreeOuterThirdViolation
+      ),
+    };
+  }
+
+  private calcMean = (data: number[]): number => {
+    const sum = data.reduce((acc: number, curr: number) => {
+      return (acc += curr);
+    }, 0);
+    return sum / data.length;
+  };
+
+  private calcStDev = (data: number[], mean: number): number => {
+    const sigma = data.reduce((acc: number, curr: number) => {
+      return (acc += (curr - mean) * (curr - mean));
+    }, 0);
+    return Math.sqrt(sigma / data.length);
+  };
+
+  private process = (): void => {
+    this.points = this.data.map((val: number, idx: number) => {
+      const point: IShewhartDataPoint = {
+        value: val,
+        violations: {
+          ThreeSigmaViolation: this.hasThreeSigmaViolation(idx),
+          EightPointsAboveBelowMean: this.hasEightConsecPoints(idx),
+          SixPointTrend: this.hasSixOrMoreIncreaseDecreaseTrend(idx),
+          InnerThird15ConsecutiveViolation: this.hasFifteenConsecPointsInSigma1(
+            idx
+          ),
+          TwoOfThreeOuterThirdViolation: this.hasTwoOfThreeInSigma3(idx),
+        },
+      };
+      return point;
+    });
+  };
+
+  /* Rules
+   */
+  /**
+   * 1 Point Outside the +/−3 Sigma Limits
+   */
+  private hasThreeSigmaViolation = (idx: number): boolean => {
+    // 1 Point Outside the +/−3 Sigma Limits
+    const val = this.data[idx];
+    return !!(val > this.posSigma3 || val < this.negSigma3);
+  };
+
+  /**
+   * 8 Successive Consecutive Points Above (or Below) the Centerline
+   */
+  private hasEightConsecPoints = (idx: number): boolean => {
+    // 8 Successive Consecutive Points Above (or Below) the Centerline
+    // get last 8 include idx check if above/below mean
+    const sliceIdx = 7;
+    if (idx < sliceIdx) {
+      return false;
+    }
+    // slice arr 8 below idx
+    const sliced = this.data.slice(idx - sliceIdx, idx + 1);
+    if (sliced.length < sliceIdx) {
+      // eslint-disable-next-line no-throw-literal
+      throw new Error("Sliced array is less then 8");
+    }
+    const above = sliced.every((e) => e > this.mean);
+    const below = sliced.every((numb) => numb < this.mean);
+    return !!(above || below);
+  };
+
+  /**
+   * Six or More Consecutive Points Steadily Increasing or Decreasing
+   */
+  private hasSixOrMoreIncreaseDecreaseTrend = (idx: number): boolean => {
+    // Six or More Consecutive Points Steadily Increasing or Decreasing
+    const sliceIdx = 5;
+    if (idx < sliceIdx) {
+      return false;
+    }
+    // slice arr 6 below idx
+    const sliced = this.data.slice(idx - sliceIdx, idx + 1);
+    if (sliced.length < sliceIdx) {
+      throw new Error("Sliced array is less then 6");
+    }
+    const trendUp: boolean = this.isTrendUp(sliced);
+    const trendDown: boolean = this.isTrendDown(sliced);
+    return !!(trendDown || trendUp);
+  };
+
+  /**
+   *  Two out of Three Successive Points in sigma 3 or Beyond
+   */
+  private hasTwoOfThreeInSigma3 = (idx: number): boolean => {
+    const sliceIdx = 2;
+    if (idx < sliceIdx) {
+      return false;
+    }
+    // slice arr 3 below idx
+    const sliced = this.data.slice(idx - sliceIdx, idx + 1);
+    if (sliced.length < sliceIdx) {
+      throw new Error("Sliced array is less then 6");
+    }
+    const outerThird = sliced.filter(
+      (f) => f > this.posSigma2 || f < this.negSigma2
+    );
+    // length needs to be two
+    return outerThird.length > 1;
+  };
+
+  /**
+   * 15 Consecutive Points in Zone C on Either Side of the Centerline
+   */
+  private hasFifteenConsecPointsInSigma1 = (idx: number): boolean => {
+    const sliceIdx = 14;
+    if (idx < sliceIdx) {
+      return false;
+    }
+    // slice arr 15 below idx
+    const sliced = this.data.slice(idx - sliceIdx, idx + 1);
+    if (sliced.length < sliceIdx) {
+      throw new Error("Sliced array is less then 15");
+    }
+    const isMeanHugging = sliced.every(
+      (e) => e > this.negSigma1 && e < this.posSigma1
+    );
+    return isMeanHugging;
+  };
+
+  private isTrendDown = (val: number[]): boolean => {
+    const result: boolean = val.reduce(
+      (acc: boolean, curr: number, idx: number, arr: number[]) => {
+        return idx === 0 ? true : acc && curr < arr[idx - 1];
+      },
+      false
+    );
+    return result;
+  };
+
+  private isTrendUp = (val: number[]): boolean => {
+    return val.reduce(
+      (acc: boolean, curr: number, idx: number, arr: number[]) => {
+        return idx === 0 ? true : acc && curr > arr[idx - 1];
+      },
+      false
+    );
+  };
+}
