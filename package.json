@@ -1,5 +1,5 @@
 {
-  "name": "shewhartcontrols",
+  "name": "@lucasheight/shewhartcontrols",
   "version": "0.0.1",
   "keywords": ["shewhart", "control charts", "chart"],
   "description": "Takes an array of numbers and applies shewhart control rules",
