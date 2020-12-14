@@ -1,9 +1,10 @@
 {
   "name": "shewhartcontrols",
-  "version": "1.0.0",
+  "version": "0.0.1",
+  "keywords": ["shewhart", "control charts", "chart"],
   "description": "Takes an array of numbers and applies shewhart control rules",
   "files": [
-    "dist/"
+    "dist"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
