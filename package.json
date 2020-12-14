@@ -2,12 +2,25 @@
   "name": "shewhartcontrols",
   "version": "1.0.0",
   "description": "Takes an array of numbers and applies shewhart control rules",
+  "files": [
+    "dist/"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "private": "false",
   "scripts": {
-    "test": "jasmine-ts --config=jasmine.json"
+    "test": "jasmine-ts --config=jasmine.json",
+    "build": "tsc"
   },
-  "author": "Lynden Garrett",
+  "author": {
+    "name": "Lynden Garrett",
+    "email": "lyndengarrett@gmail.com",
+    "url": "https://github.com/lucasheight"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucasheight/shewhartControls"
+  },
   "license": "MIT",
   "devDependencies": {
     "@types/jasmine": "^3.6.2",
