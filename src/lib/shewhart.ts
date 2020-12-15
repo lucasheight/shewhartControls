@@ -84,7 +84,8 @@ export class ShewhartControls implements IShewhartResult {
     }, 0);
     // default is to implemented "Bessels correction https://en.wikipedia.org/wiki/Bessel%27s_correction"
     const N = this.useSampleStDev ? data.length - 1 : data.length;
-    return Math.sqrt(sigma / N);
+    const variance = sigma / N;
+    return Math.sqrt(variance);
   };
 
   /**
