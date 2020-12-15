@@ -5,8 +5,6 @@ import {
 } from "./IShewhartResult";
 /** ShewhartControls class */
 export class ShewhartControls implements IShewhartResult {
-  /** isValid: true when data length >= minPoints */
-  public isValid: boolean = false;
   /** mean: the mean/avg of the dataset */
   public mean: number;
   /** stDev: the standard deviation of the dataset */
@@ -28,17 +26,14 @@ export class ShewhartControls implements IShewhartResult {
   /** points: the data points and their respective rule violations */
   public points: IShewhartDataPoint[] = [];
   /**
-   *
    * @param data: number[] the data points to apply control rules
-   * @param minPoints: optional, default 20, the minimum number of data points to make a valid shewhart control. Defaults 20
    * @param useSampleStDev: optional, defaults true to implement bessel's correction (Sample Standard Deviation),(false to use population stDev)
    */
   constructor(
     private data: number[],
-    private minPoints: number = 20,
+
     private useSampleStDev: boolean = true
   ) {
-    this.isValid = this.data.length >= this.minPoints;
     this.mean = this.calcMean(data);
     this.stDev = this.calcStDev(data, this.mean);
     this.posSigma1 = this.mean + 1 * this.stDev;

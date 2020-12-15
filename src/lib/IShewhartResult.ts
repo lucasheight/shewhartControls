@@ -26,8 +26,6 @@ export interface IShewhartDataPoint {
  * IShewhartResult interface
  */
 export interface IShewhartResult {
-  /** isValid: true when data length >= minPoints */
-  isValid: boolean;
   /** mean: the mean/avg of the dataset */
   mean: number;
   /** stDev: the standard deviation of the dataset */

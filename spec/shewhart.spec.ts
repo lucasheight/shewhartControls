@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import { IShewhartResult } from "../src/lib/IShewhartResult";
 import { ShewhartControls } from "../src/lib/shewhart";
 import { eightPointsAboveMeanData } from "./testData/eightPointsMean";
 import { invalidData } from "./testData/invalidShewhart";
@@ -12,12 +13,9 @@ describe("Shewhart Tests", () => {
   //   beforeEach(() => {
   //     shewhart = new ShewhartControls([1, 2, 3, 4, 5], 10);
   //   });
-  it("Empty input should be an invalid shewhart", () => {
-    const data = new ShewhartControls([]);
-    expect(data.isValid).toBeFalse();
-  });
   it("Sample should create a stDev of 3.619", () => {
-    const data = new ShewhartControls([9, 2, 5, 4, 12, 7]);
+    const data: IShewhartResult = new ShewhartControls([9, 2, 5, 4, 12, 7]);
+    // console.log(data);
     const stDev = data.stDev;
     const fixed3 = parseFloat(stDev.toString()).toFixed(3);
     expect(fixed3).toBe("3.619");
@@ -25,14 +23,6 @@ describe("Shewhart Tests", () => {
   it("Should construct object", () => {
     const data = new ShewhartControls(invalidData);
     expect(data).toBeInstanceOf(ShewhartControls);
-  });
-  it("Should be invalid shewhart result", () => {
-    const data = new ShewhartControls(invalidData);
-    expect(data.isValid).toBeFalse();
-  });
-  it("Should be valid shewhart result", () => {
-    const data = new ShewhartControls(validData);
-    expect(data.isValid).toBeTrue();
   });
 
   it("ValidData should break rule 1: 1 point outside sigma 3", () => {
