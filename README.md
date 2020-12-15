@@ -16,7 +16,7 @@ Optionally:
   **Results**
 
 ``` json
-ShewhartControls {
+ShewhartControls: {
   data: [ 9, 2, 5, 4, 12, 7 ],
   useSampleStDev: true,
   points: [
