@@ -45,4 +45,20 @@ ShewhartControls: {
   }
 }
 ```
+## Violations Object
 
+The violations object contains booleans when rules have been violated. These violations are indicated for the whole dataset and individually for each data point.
+``` typescript
+export interface IViolations {
+  /** 1 Point Outside the +/−3 Sigma Limits */
+  ThreeSigmaViolation: boolean;
+  /** 8 Successive Consecutive Points Above (or Below) the Centerline */
+  EightPointsAboveBelowMean: boolean;
+  /** Six or More Consecutive Points Steadily Increasing or Decreasing */
+  SixPointTrend: boolean;
+  /** Two out of Three Successive Points in Zone A or Beyond */
+  TwoOfThreeOuterThirdViolation: boolean;
+  /** 15 Consecutive Points in Zone C on Either Side of the Centerline */
+  InnerThird15ConsecutiveViolation: boolean;
+}
+```
