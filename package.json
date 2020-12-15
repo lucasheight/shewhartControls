@@ -15,7 +15,7 @@
   "scripts": {
     "test": "jasmine-ts --config=jasmine.json",
     "build": "tsc",
-    "publish": "tsc && npm version patch && npm publish"
+    "dist": "tsc && npm version patch && npm publish"
   },
   "author": {
     "name": "Lynden Garrett",
