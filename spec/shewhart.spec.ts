@@ -12,6 +12,16 @@ describe("Shewhart Tests", () => {
   //   beforeEach(() => {
   //     shewhart = new ShewhartControls([1, 2, 3, 4, 5], 10);
   //   });
+  it("Empty input should be an invalid shewhart", () => {
+    const data = new ShewhartControls([]);
+    expect(data.isValid).toBeFalse();
+  });
+  it("Sample should create a stDev of 3.619", () => {
+    const data = new ShewhartControls([9, 2, 5, 4, 12, 7]);
+    const stDev = data.stDev;
+    const fixed3 = parseFloat(stDev.toString()).toFixed(3);
+    expect(fixed3).toBe("3.619");
+  });
   it("Should construct object", () => {
     const data = new ShewhartControls(invalidData);
     expect(data).toBeInstanceOf(ShewhartControls);
@@ -99,49 +109,4 @@ describe("Shewhart Tests", () => {
       data.points[10].violations.InnerThird15ConsecutiveViolation;
     expect(violation).toBeFalse();
   });
-  // it("2. Should be a trend up", () => {
-  //   const data = [1, 2];
-  //   const res = trendUp(data);
-  //   expect(res).toBeTrue();
-  // });
-  // it("3. Should not be a trend up", () => {
-  //   const data = [1, 2, 3, 2, 5, 6, 7, 8];
-  //   const res = trendUp(data);
-  //   expect(res).toBeFalse();
-  // });
-  // it("4. Should not be a trend up", () => {
-  //   const data = [1, 1, 1, 1, 1, 1, 1, 1];
-  //   const res = trendUp(data);
-  //   expect(res).toBeFalse();
-  // });
-  // it("5. Should not be a trend up", () => {
-  //   const data = [1];
-  //   const res = trendUp(data);
-  //   expect(res).toBeFalse();
-  // });
-  // it("1. Should be a trend down", () => {
-  //   const data = [10, 9, 8, 6, 5, 4, 2, 0];
-  //   const res = trendDown(data);
-  //   expect(res).toBeTrue();
-  // });
-  // it("2. Should be a trend down", () => {
-  //   const data = [10, 9];
-  //   const res = trendDown(data);
-  //   expect(res).toBeTrue();
-  // });
-  // it("3. Should not be a trend down", () => {
-  //   const data = [10, 15, 8, 6, 5, 4, 2, 0];
-  //   const res = trendDown(data);
-  //   expect(res).toBeFalse();
-  // });
-  // it("4. Should not be a trend down", () => {
-  //   const data = [10, 10, 10];
-  //   const res = trendDown(data);
-  //   expect(res).toBeFalse();
-  // });
-  // it("5. Should not be a trend down", () => {
-  //   const data = [10];
-  //   const res = trendDown(data);
-  //   expect(res).toBeFalse();
-  // });
 });

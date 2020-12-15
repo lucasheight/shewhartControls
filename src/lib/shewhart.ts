@@ -3,19 +3,41 @@ import {
   IShewhartResult,
   IViolations,
 } from "./IShewhartResult";
+/** ShewhartControls class */
 export class ShewhartControls implements IShewhartResult {
+  /** isValid: true when data length >= minPoints */
   public isValid: boolean = false;
+  /** mean: the mean/avg of the dataset */
   public mean: number;
+  /** stDev: the standard deviation of the dataset */
   public stDev: number;
+  /** 1st positive sigma/ mean +1 stDev */
   public posSigma1: number;
+  /** 2nd positive sigma/ mean +2 stDev */
   public posSigma2: number;
+  /** 3rd positive sigma/ mean +3 stDev */
   public posSigma3: number;
+  /** 1st negative sigma/ mean - 1 stDev */
   public negSigma1: number;
+  /** 2nd negative sigma/ mean - 2 stDev */
   public negSigma2: number;
+  /** 3rd negative sigma/ mean - 3 stDev */
   public negSigma3: number;
+  /** Violations object containing results if any of the rules are broken in the dataset */
   public violations: IViolations;
+  /** points: the data points and their respective rule violations */
   public points: IShewhartDataPoint[] = [];
-  constructor(private data: number[], private minPoints: number = 20) {
+  /**
+   *
+   * @param data: number[] the data points to apply control rules
+   * @param minPoints: optional, default 20, the minimum number of data points to make a valid shewhart control. Defaults 20
+   * @param useSampleStDev: optional, defaults true to implement bessel's correction (Sample Standard Deviation),(false to use population stDev)
+   */
+  constructor(
+    private data: number[],
+    private minPoints: number = 20,
+    private useSampleStDev: boolean = true
+  ) {
     this.isValid = this.data.length >= this.minPoints;
     this.mean = this.calcMean(data);
     this.stDev = this.calcStDev(data, this.mean);
@@ -44,6 +66,10 @@ export class ShewhartControls implements IShewhartResult {
       ),
     };
   }
+  /**
+   * Calculate mean
+   * @param data
+   */
 
   private calcMean = (data: number[]): number => {
     const sum = data.reduce((acc: number, curr: number) => {
@@ -52,13 +78,23 @@ export class ShewhartControls implements IShewhartResult {
     return sum / data.length;
   };
 
+  /**
+   * Calculate standard deviation
+   * @param data
+   * @param mean
+   */
   private calcStDev = (data: number[], mean: number): number => {
     const sigma = data.reduce((acc: number, curr: number) => {
-      return (acc += (curr - mean) * (curr - mean));
+      return (acc += Math.pow(curr - mean, 2));
     }, 0);
-    return Math.sqrt(sigma / data.length);
+    // default is to implemented "Bessels correction https://en.wikipedia.org/wiki/Bessel%27s_correction"
+    const N = this.useSampleStDev ? data.length - 1 : data.length;
+    return Math.sqrt(sigma / N);
   };
 
+  /**
+   * Process the data
+   */
   private process = (): void => {
     this.points = this.data.map((val: number, idx: number) => {
       const point: IShewhartDataPoint = {
@@ -166,6 +202,10 @@ export class ShewhartControls implements IShewhartResult {
     );
     return isMeanHugging;
   };
+  /**
+   * Calculate if trending up
+   * @param val
+   */
 
   private isTrendDown = (val: number[]): boolean => {
     const result: boolean = val.reduce(
@@ -176,6 +216,10 @@ export class ShewhartControls implements IShewhartResult {
     );
     return result;
   };
+  /**
+   * Calculate if trending down
+   * @param val
+   */
 
   private isTrendUp = (val: number[]): boolean => {
     return val.reduce(
