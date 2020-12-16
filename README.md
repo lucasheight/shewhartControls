@@ -1,4 +1,4 @@
-[![npm version](https://badge.fury.io/js/%40lucasheight%2FshewhartControls.svg)](https://badge.fury.io/js/%40lucasheight%2FshewhartControls)
+[![npm version](https://badge.fury.io/js/%40lucasheight%2Fshewhartcontrols.svg)](https://badge.fury.io/js/%40lucasheight%2Fshewhartcontrols)
 # Shewhart Controls
 A simple library that applies Shewhart chart rules to an array of numbers.
 
