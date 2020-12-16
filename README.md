@@ -12,7 +12,8 @@ Create a new ShewhartControls object with an array of numbers.
 ```
 Optionally: 
 
-  *  Provide a boolean (useSampleStDev) to indicate standard deviation method to use. (defaults to true: Sample Standard Deviation)
+  *  Provide a boolean (useSampleStDev) to indicate standard deviation method to use. (defaults to true: Sample Standard Deviation). Set to false
+  if you wish to apply population standard deviation.
 
   **Results**
 
