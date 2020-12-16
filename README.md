@@ -3,7 +3,7 @@
 A simple library that applies Shewhart chart rules to an array of numbers.
 
 ## Install
-``` npm install --save @lucaseheight/shewhartcontrols```
+``` npm install --save @lucasheight/shewhartcontrols```
 
 ## Using
 Create a new ShewhartControls object with an array of numbers.
